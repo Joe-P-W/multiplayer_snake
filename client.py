@@ -1,12 +1,6 @@
 import socket
-import os
 
-HEADER = 16
-PORT = 5050
-SERVER = os.getenv("snake_server_address")
-ADDRESS = (SERVER, PORT)
-FORMAT = "utf-8"
-DISCONNECT_COMMAND = "!DISCONNECT"
+from constants.connection_details import ADDRESS, HEADER, FORMAT, DISCONNECT_COMMAND
 
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -26,5 +20,6 @@ def send(msg):
 while True:
     msg = input("What do you want to send? ")
     send(msg)
+
     if msg == DISCONNECT_COMMAND:
         break
