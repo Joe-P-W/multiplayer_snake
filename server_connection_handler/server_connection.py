@@ -2,7 +2,7 @@ import socket
 from constants.connection_details import HEADER, FORMAT, DISCONNECT_COMMAND
 
 
-class Connection:
+class ServerConnection:
     def __init__(self, connection: socket.socket, address):
         self.connected = True
         self.connection = connection
