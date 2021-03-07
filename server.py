@@ -4,9 +4,6 @@ import threading
 from constants.connection_details import ADDRESS, SERVER
 from connection_handler.connection import Connection
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDRESS)
-
 
 def handle_client(connection: socket.socket, address):
     print(f"[NEW CONNECTION] {address} has connected to the server.")
@@ -19,7 +16,7 @@ def handle_client(connection: socket.socket, address):
     print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 2}")
 
 
-def start():
+def run_server(server):
     server.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
@@ -28,5 +25,8 @@ def start():
         thread.start()
 
 
-print("[STARTING] Server is starting.")
-start()
+if __name__ == "__main__":
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(ADDRESS)
+    print("[STARTING] Server is starting.")
+    run_server(server)

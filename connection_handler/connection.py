@@ -14,7 +14,7 @@ class Connection:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.connection.close()
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self):
         while self.connected:
             message_length = self.connection.recv(HEADER).decode(FORMAT)
             if message_length:
