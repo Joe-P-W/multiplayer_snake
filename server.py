@@ -5,18 +5,18 @@ from constants.connection_details import ADDRESS, SERVER
 from server_connection_handler.server_connection import ServerConnection
 
 
-def handle_client(connection: socket.socket, address):
+def handle_client(connection: socket.socket, address: tuple):
     print(f"[NEW CONNECTION] {address} has connected to the server.")
     print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
 
-    with ServerConnection(connection, address) as _connection:
-        _connection()
+    with ServerConnection(connection, address) as server_connection:
+        server_connection()
 
     print(f"[DISCONNECTION] {address} has disconnected")
     print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 2}")
 
 
-def run_server(server):
+def run_server(server: socket.socket):
     server.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
