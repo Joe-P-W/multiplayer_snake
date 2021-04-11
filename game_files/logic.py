@@ -181,7 +181,6 @@ def main_menu(screen, squares, resolution, font):
 
 
 def multiplayer_game(screen, squares, resolution, font, ip_address, port):
-    print("foo")
     print(ip_address)
     print(port)
 

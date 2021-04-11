@@ -64,18 +64,19 @@ class InputBox:
             else:
                 self.active = False
             # Change the current color of the input box.
-            self.colour = COLOUR_ACTIVE if self.active else COLOUR_INACTIVE
+
         if event.type == pygame.KEYDOWN:
             if self.active:
                 if event.key == pygame.K_RETURN:
-                    print(self.text)
-                    self.text = ''
+                    self.active = False
                 elif event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
                 else:
                     self.text += event.unicode
                 # Re-render the text.
-                self.txt_surface = self.font.render(self.text, True, self.colour)
+
+        self.colour = COLOUR_ACTIVE if self.active else COLOUR_INACTIVE
+        self.txt_surface = self.font.render(self.text, True, self.colour)
 
     def update(self):
         # Resize the box if the text is too long.
