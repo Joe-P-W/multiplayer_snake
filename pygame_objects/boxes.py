@@ -1,8 +1,7 @@
 import pygame
 import abc
 
-COLOUR_INACTIVE = (255, 100, 0)
-COLOUR_ACTIVE = (255, 0, 0)
+from pygame.font import Font
 
 
 class Box(abc.ABC):
@@ -17,23 +16,39 @@ class Box(abc.ABC):
 
 class ButtonBox(Box):
     def __init__(
-            self, x, y, width, height, text, font, box_colour, text_colour, click_event, args=tuple(), kwargs=None
+            self,
+            x: int,
+            y: int,
+            width: int,
+            height: int,
+            text: str,
+            font: Font,
+            box_colour: tuple[int, int, int] = (255, 100, 0),
+            text_colour: tuple[int, int, int] = (0, 255, 0),
+            event: callable = None,
+            args: tuple = tuple(),
+            kwargs: dict = None
     ):
         if kwargs is None:
             kwargs = {}
 
+        self.x = x
+        self.y = y
         self.args = args
         self.kwargs = kwargs
         self.rect = pygame.Rect(x, y, width, height)
         self.font = font
         self.box_colour = box_colour
-        self.click_event = click_event
+        self.click_event = event
         self.text = self.font.render(text, False, text_colour)
         self.text_rect = self.text.get_rect(center=self.rect.center)
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
+                if self.click_event is None:
+                    raise ValueError(f"Event was not specified in {self.__class__}")
+
                 self.click_event(*(arg() if callable(arg) else arg for arg in self.args), **self.kwargs)
 
     def draw(self, screen):
@@ -41,11 +56,27 @@ class ButtonBox(Box):
         screen.blit(self.text, self.text_rect)
 
 
-class InputBox:
-    def __init__(self, x, y, width, height, font, title, text=''):
+class InputBox(Box):
+    def __init__(
+            self,
+            x: int,
+            y: int,
+            width: int,
+            height: int,
+            font: Font,
+            title: str,
+            text: str = '',
+            active_colour: tuple[int, int, int] = (255, 0, 0),
+            inactive_colour: tuple[int, int, int] = (255, 100, 0)
+    ):
+        self.x = x
+        self.y = y
+        self.init_width = width
         self.rect = pygame.Rect(x, y, width, height)
         self.title_text = title
-        self.colour = COLOUR_INACTIVE
+        self.colour = inactive_colour
+        self.inactive_colour = inactive_colour
+        self.active_colour = active_colour
         self.text = text
         self.font = font
         self.title_surface = self.font.render(self.title_text, False, self.colour)
@@ -75,12 +106,13 @@ class InputBox:
                     self.text += event.unicode
                 # Re-render the text.
 
-        self.colour = COLOUR_ACTIVE if self.active else COLOUR_INACTIVE
+        self.colour = self.active_colour if self.active else self.inactive_colour
         self.txt_surface = self.font.render(self.text, True, self.colour)
+        self.update()
 
     def update(self):
         # Resize the box if the text is too long.
-        width = max(200, self.txt_surface.get_width()+10)
+        width = max(self.init_width, self.txt_surface.get_width()+10)
         self.rect.w = width
 
     def draw(self, screen):

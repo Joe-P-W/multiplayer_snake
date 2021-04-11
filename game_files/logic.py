@@ -188,15 +188,16 @@ def multiplayer_game(screen, squares, resolution, font, ip_address, port):
 def multiplayer_menu(screen, squares, resolution, font):
     clock = pygame.time.Clock()
     title = font.render("Input IP & Port of Server you wish to connect to.", False, (0, 255, 0))
-    ip_address_box = InputBox(50, 200, 100, 50, font, "IP Address")
+    ip_address_box = InputBox(50, 200, 200, 50, font, "IP Address")
     port_input_box = InputBox(50, 350, 100, 50, font, "Port")
     main_menu_button = ButtonBox(
         450, 550, 150, 50, "Main Menu", font,
-        (255, 100, 0), (0, 255, 0), main_menu, args=(screen, squares, resolution, font)
+        event=main_menu, args=(screen, squares, resolution, font)
     )
     enter_button = ButtonBox(
-        300, 300, 150, 50, "Enter", font, (255, 100, 0), (0, 255, 0),
-        multiplayer_game, args=(screen, squares, resolution, font, ip_address_box.value, port_input_box.value)
+        300, 300, 150, 50, "Enter", font,
+        event=multiplayer_game,
+        args=(screen, squares, resolution, font, ip_address_box.value, port_input_box.value)
     )
     boxes = (ip_address_box, port_input_box, main_menu_button, enter_button)
     done = False
@@ -208,9 +209,6 @@ def multiplayer_menu(screen, squares, resolution, font):
 
             for box in boxes:
                 box.handle_event(event)
-
-        for box in [ip_address_box, port_input_box]:
-            box.update()
 
         screen.fill((0, 0, 0))
         screen.blit(title, (45, 0))
