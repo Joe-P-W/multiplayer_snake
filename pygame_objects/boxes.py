@@ -2,6 +2,7 @@ import pygame
 import abc
 
 from pygame.font import Font
+from tkinter import Tk
 
 
 class Box(abc.ABC):
@@ -98,13 +99,17 @@ class InputBox(Box):
 
         if event.type == pygame.KEYDOWN:
             if self.active:
-                if event.key == pygame.K_RETURN:
-                    self.active = False
-                elif event.key == pygame.K_BACKSPACE:
-                    self.text = self.text[:-1]
+                if event.mod == pygame.KMOD_NONE:
+                    if event.key == pygame.K_RETURN:
+                        self.active = False
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.text = self.text[:-1]
+                    else:
+                        self.text += event.unicode
                 else:
-                    self.text += event.unicode
-                # Re-render the text.
+                    if event.mod & pygame.KMOD_CTRL:
+                        if event.key == pygame.K_v:
+                            self.text += Tk().clipboard_get()
 
         self.colour = self.active_colour if self.active else self.inactive_colour
         self.txt_surface = self.font.render(self.text, True, self.colour)
